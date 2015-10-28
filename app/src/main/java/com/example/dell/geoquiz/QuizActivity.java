@@ -28,8 +28,8 @@ public class QuizActivity extends Activity {
             new TrueFalse(R.string.third_question, true),
     };
 
-
     private int mCurrentIndex = 0;
+    private boolean mIsCheater;
 
     private void updateQuestion(){
         int question = mQuesstionBank[mCurrentIndex].getQuestion();
@@ -40,10 +40,14 @@ public class QuizActivity extends Activity {
         boolean answerIsTrue = mQuesstionBank[mCurrentIndex].isTrueQuestion();
 
         int messageResId = 0;
-        if (answerIsTrue == userPressed) {
-            messageResId = R.string.true_toast;
-        } else {
-            messageResId = R.string.false_toast;
+        if(mIsCheater){
+            messageResId = R.string.judgment_toast;
+        }else {
+            if (answerIsTrue == userPressed) {
+                messageResId = R.string.true_toast;
+            } else {
+                messageResId = R.string.false_toast;
+            }
         }
         makeText(QuizActivity.this,
                 messageResId,
@@ -78,8 +82,8 @@ public class QuizActivity extends Activity {
             public void onClick(View v) {
                 Intent i = new Intent(QuizActivity.this,CheatActivity.class);
                 boolean answerIs = mQuesstionBank[mCurrentIndex].isTrueQuestion();
-                i.putExtra(CheatActivity.EXTRA_ANSWER_IS,answerIs);
-                startActivity(i);
+                i.putExtra(CheatActivity.EXTRA_ANSWER_IS, answerIs);
+                startActivityForResult(i,0);
             }
         });
 
@@ -88,10 +92,19 @@ public class QuizActivity extends Activity {
             @Override
             public void onClick(View v) {
                 mCurrentIndex = (mCurrentIndex + 1) % mQuesstionBank.length;
+                mIsCheater = false;
                 updateQuestion();
             }
         });
     updateQuestion();
+    }
+
+    @Override
+    protected  void onActivityResult(int requestCode, int resultCode, Intent data){
+        if(data == null){
+            return;
+        }
+        mIsCheater = data.getBooleanExtra(CheatActivity.EXTRA_ANSWER_SHOWN, false);
     }
 
 }
