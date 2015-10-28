@@ -20,6 +20,32 @@ public class QuizActivity extends Activity {
     private Button mNextButton;
     private TextView mQuestionTextView;
 
+    private  TrueFalse[] mQuesstionBank = new TrueFalse[]{
+            new TrueFalse(R.string.first_question, true),
+            new TrueFalse(R.string.second_question, false),
+            new TrueFalse(R.string.third_question, true),
+    };
+
+    private int mCurrentIndex = 0;
+
+    private void updateQuestion(){
+        int question = mQuesstionBank[mCurrentIndex].getQuestion();
+        mQuestionTextView.setText(question);
+    }
+
+    private void checkAnswer(boolean userPressed) {
+        boolean answerIsTrue = mQuesstionBank[mCurrentIndex].isTrueQuestion();
+
+        int messageResId = 0;
+        if (answerIsTrue == userPressed) {
+            messageResId = R.string.true_toast;
+        } else {
+            messageResId = R.string.false_toast;
+        }
+        makeText(QuizActivity.this,
+                messageResId,
+                Toast.LENGTH_SHORT).show();
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,14 +53,11 @@ public class QuizActivity extends Activity {
 
         mQuestionTextView = (TextView)findViewById(R.id.question_text);
 
-
         mTrueButton = (Button) findViewById(R.id.true_button);
         mTrueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                makeText(QuizActivity.this,
-                        R.string.true_toast,
-                        Toast.LENGTH_SHORT).show();
+                checkAnswer(true);
             }
         });
 
@@ -42,9 +65,7 @@ public class QuizActivity extends Activity {
         mFalseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                makeText(QuizActivity.this,
-                        R.string.false_toast,
-                        Toast.LENGTH_SHORT).show();
+                checkAnswer(false);
             }
         });
 
@@ -52,11 +73,11 @@ public class QuizActivity extends Activity {
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mQuestionTextView.setText(R.string.first_question);
+                mCurrentIndex = (mCurrentIndex + 1) % mQuesstionBank.length;
+                updateQuestion();
             }
         });
-
-
+    updateQuestion();
     }
 
     @Override
