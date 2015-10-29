@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,11 +17,17 @@ import static android.widget.Toast.*;
 
 public class QuizActivity extends Activity {
 
+    private static final String TAG = "QuizActivity";
+    private static final String KEY_INDEX = "index";
+    private static final String KEY_ISCHEATER = "ischeater";
+
     private Button mTrueButton;
     private Button mFalseButton;
     private Button mNextButton;
     private Button mCheatButton;
     private TextView mQuestionTextView;
+
+    private int mCurrentIndex = 0;
 
     private  TrueFalse[] mQuesstionBank = new TrueFalse[]{
             new TrueFalse(R.string.first_question, true),
@@ -28,8 +35,8 @@ public class QuizActivity extends Activity {
             new TrueFalse(R.string.third_question, true),
     };
 
-    private int mCurrentIndex = 0;
-    private boolean mIsCheater;
+    private boolean mIsCheater[] = new boolean[]{
+            false, false, false,};
 
     private void updateQuestion(){
         int question = mQuesstionBank[mCurrentIndex].getQuestion();
@@ -40,7 +47,7 @@ public class QuizActivity extends Activity {
         boolean answerIsTrue = mQuesstionBank[mCurrentIndex].isTrueQuestion();
 
         int messageResId = 0;
-        if(mIsCheater){
+        if(mIsCheater[mCurrentIndex]){
             messageResId = R.string.judgment_toast;
         }else {
             if (answerIsTrue == userPressed) {
@@ -56,6 +63,7 @@ public class QuizActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate() called");
         setContentView(R.layout.activity_quiz);
 
         mQuestionTextView = (TextView)findViewById(R.id.question_text);
@@ -83,7 +91,7 @@ public class QuizActivity extends Activity {
                 Intent i = new Intent(QuizActivity.this,CheatActivity.class);
                 boolean answerIs = mQuesstionBank[mCurrentIndex].isTrueQuestion();
                 i.putExtra(CheatActivity.EXTRA_ANSWER_IS, answerIs);
-                startActivityForResult(i,0);
+                startActivityForResult(i, 0);
             }
         });
 
@@ -92,11 +100,22 @@ public class QuizActivity extends Activity {
             @Override
             public void onClick(View v) {
                 mCurrentIndex = (mCurrentIndex + 1) % mQuesstionBank.length;
-                mIsCheater = false;
                 updateQuestion();
             }
         });
+
+        if(savedInstanceState != null) {
+            mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
+            mIsCheater = savedInstanceState.getBooleanArray(KEY_ISCHEATER);
+        }
     updateQuestion();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState){
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
+        savedInstanceState.putBooleanArray(KEY_ISCHEATER,mIsCheater);
     }
 
     @Override
@@ -104,7 +123,34 @@ public class QuizActivity extends Activity {
         if(data == null){
             return;
         }
-        mIsCheater = data.getBooleanExtra(CheatActivity.EXTRA_ANSWER_SHOWN, false);
+        if(!mIsCheater[mCurrentIndex])
+            mIsCheater[mCurrentIndex] = data.getBooleanExtra(CheatActivity.EXTRA_ANSWER_SHOWN, false);
+
     }
 
+    @Override
+    public void onStart(){
+        super.onStart();
+        Log.d(TAG, "onStart() called");
+    }
+    @Override
+    public void onPause(){
+        super.onPause();
+        Log.d(TAG,"onPause() called");
+    }
+    @Override
+    public void onResume(){
+        super.onResume();
+        Log.d(TAG,"onResume() called");
+    }
+    @Override
+    public void onStop(){
+        super.onStop();
+        Log.d(TAG,"onStop() called");
+    }
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        Log.d(TAG,"onDestroy() called");
+    }
 }

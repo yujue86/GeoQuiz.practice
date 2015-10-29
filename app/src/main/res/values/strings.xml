@@ -11,7 +11,6 @@
     <string name="next_button">next</string>
     <string name="cheat_button">cheat</string>
     <string name="judgment_toast">Cheat is wrong!</string>
-    <string name="show_answe_textview">are you sure to do this?</string>
     <string name="show_answer_button">Show Answer</string>
     <string name="first_question">hello 1</string>
     <string name="second_question">hello 2</string>

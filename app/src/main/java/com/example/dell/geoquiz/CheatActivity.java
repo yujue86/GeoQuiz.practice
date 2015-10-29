@@ -15,13 +15,23 @@ public class CheatActivity extends AppCompatActivity {
 
     public static final String EXTRA_ANSWER_IS = "Mengxl.answer_is";
     public static final String EXTRA_ANSWER_SHOWN = "Mengxl.answer_shown";
+    private static final String KEY_CHEATER = "cheater";
 
     private boolean mAnswerIs;
+    private boolean mIsCheater;
 
-    private Button mShowAnswer;
+    private Button mShownAnswer;
     private TextView mAnswerTextView;
 
+    private void setAnswerShown(){
+        if(mAnswerIs == true)
+            mAnswerTextView.setText(R.string.true_button);
+        else
+            mAnswerTextView.setText(R.string.false_button);
+    }
+
     private void setAnswerShownResult(boolean isAnswerShown){
+        mIsCheater = isAnswerShown;
         Intent data = new Intent();
         data.putExtra(EXTRA_ANSWER_SHOWN,isAnswerShown);
         setResult(RESULT_OK, data);
@@ -33,22 +43,30 @@ public class CheatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cheat);
 
         mAnswerIs = getIntent().getBooleanExtra(EXTRA_ANSWER_IS,false);
+
         mAnswerTextView = (TextView)findViewById(R.id.show_answe_textView);
 
         setAnswerShownResult(false);
 
-        mShowAnswer = (Button)findViewById(R.id.show_answe_button);
-        mShowAnswer.setOnClickListener(new View.OnClickListener() {
+        mShownAnswer = (Button)findViewById(R.id.show_answe_button);
+        mShownAnswer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mAnswerIs == true)
-                    mAnswerTextView.setText(R.string.true_button);
-                else
-                    mAnswerTextView.setText(R.string.false_button);
-
+                setAnswerShown();
                 setAnswerShownResult(true);
             }
         });
+
+        if(savedInstanceState != null){
+            mIsCheater = savedInstanceState.getBoolean(KEY_CHEATER,false);
+            setAnswerShown();
+            setAnswerShownResult(true);
+        }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState){
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putBoolean(KEY_CHEATER, mIsCheater);
+    }
 }

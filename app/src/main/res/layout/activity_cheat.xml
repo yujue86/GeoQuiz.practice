@@ -8,7 +8,12 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/show_answe_textview"
+        android:text="are you sure to do this?"
+        android:padding="24dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:padding="24dp"
         android:id="@+id/show_answe_textView" />
 
