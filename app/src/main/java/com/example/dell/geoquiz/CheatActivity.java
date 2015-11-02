@@ -59,8 +59,12 @@ public class CheatActivity extends AppCompatActivity {
 
         if(savedInstanceState != null){
             mIsCheater = savedInstanceState.getBoolean(KEY_CHEATER,false);
-            setAnswerShown();
-            setAnswerShownResult(true);
+            if(mIsCheater) {
+                setAnswerShown();
+                setAnswerShownResult(true);
+            }else{
+                setAnswerShownResult(false);
+            }
         }
     }
 
